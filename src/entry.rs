@@ -563,17 +563,18 @@ impl<R: Read + Unpin> EntryFields<R> {
                     )
                 })?;
             } else {
-                symlink(&src, dst).await.map_err(|err| {
-                    Error::new(
-                        err.kind(),
-                        format!(
-                            "{} when symlinking {} to {}",
-                            err,
-                            src.display(),
-                            dst.display()
-                        ),
-                    )
-                })?;
+                println!("Skip linking: {}, {}", src.display(), dst.display());
+                // symlink(&src, dst).await.map_err(|err| {
+                //     Error::new(
+                //         err.kind(),
+                //         format!(
+                //             "{} when symlinking {} to {}",
+                //             err,
+                //             src.display(),
+                //             dst.display()
+                //         ),
+                //     )
+                // })?;
             };
             return Ok(Unpacked::Other);
 
