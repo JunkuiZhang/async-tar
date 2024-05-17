@@ -438,7 +438,7 @@ async fn append_path_with_name(
             )
         })?
     } else {
-        fs::symlink_metadata(path).await.map_err(|err| {
+        fs::metadata(path).await.map_err(|err| {
             io::Error::new(
                 err.kind(),
                 format!("{} when getting metadata for {}", err, path.display()),
@@ -605,7 +605,7 @@ async fn append_dir_all(
                 append_dir(dst, &dest, &src, mode).await?;
             }
         } else if !follow && is_symlink {
-            let stat = fs::symlink_metadata(&src).await?;
+            let stat = fs::metadata(&src).await?;
             let link_name = fs::read_link(&src).await?;
             append_fs(dst, &dest, &stat, &mut io::empty(), mode, Some(&link_name)).await?;
         } else {
