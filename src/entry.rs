@@ -820,7 +820,7 @@ impl<R: Read + Unpin> EntryFields<R> {
     async fn ensure_dir_created(&self, dst: &Path, dir: &Path) -> io::Result<()> {
         let mut ancestor = dir;
         let mut dirs_to_create = Vec::new();
-        while ancestor.symlink_metadata().await.is_err() {
+        while ancestor.metadata().await.is_err() {
             dirs_to_create.push(ancestor);
             if let Some(parent) = ancestor.parent() {
                 ancestor = parent;
