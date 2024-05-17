@@ -227,7 +227,7 @@ impl<R: Read + Unpin> Archive<R> {
         let mut pinned = Pin::new(&mut entries);
         let dst = dst.as_ref();
 
-        if dst.symlink_metadata().await.is_err() {
+        if dst.metadata().await.is_err() {
             fs::create_dir_all(&dst)
                 .await
                 .map_err(|e| TarError::new(&format!("failed to create `{}`", dst.display()), e))?;
