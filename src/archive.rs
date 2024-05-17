@@ -223,15 +223,18 @@ impl<R: Read + Unpin> Archive<R> {
     /// # Ok(()) }) }
     /// ```
     pub async fn unpack<P: AsRef<Path>>(self, dst: P) -> io::Result<()> {
+        println!("  -> Entering unpack");
         let mut entries = self.entries()?;
         let mut pinned = Pin::new(&mut entries);
         let dst = dst.as_ref();
 
+        println!("  -> Unpack 1");
         if dst.metadata().await.is_err() {
             fs::create_dir_all(&dst)
                 .await
                 .map_err(|e| TarError::new(&format!("failed to create `{}`", dst.display()), e))?;
         }
+        println!("  -> Unpack 2");
 
         // Canonicalizing the dst directory will prepend the path with '\\?\'
         // on windows which will allow windows APIs to treat the path as an
@@ -242,12 +245,14 @@ impl<R: Read + Unpin> Archive<R> {
             .canonicalize()
             .await
             .unwrap_or_else(|_| dst.to_path_buf());
+        println!("  -> Unpack 3");
 
         // Delay any directory entries until the end (they will be created if needed by
         // descendants), to ensure that directory permissions do not interfer with descendant
         // extraction.
         let mut directories = Vec::new();
         while let Some(entry) = pinned.next().await {
+            println!("  -> Unpack 4");
             let mut file = entry.map_err(|e| TarError::new("failed to iterate over archive", e))?;
             if file.header().entry_type() == crate::EntryType::Directory {
                 directories.push(file);
